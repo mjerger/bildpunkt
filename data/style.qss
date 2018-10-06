@@ -1,0 +1,22 @@
+QMainWindow,
+QWidget
+{
+    color: #BBB;
+    background-color: #161619;
+}
+
+QMenu,
+QMenuBar
+{
+    color: #BBB;
+}
+
+QMenuBar:selected,
+QMenuBar:item:selected,
+QMenu:selected,
+QMenu:item:selected
+{
+    color: #FFF;
+    background-color: #202023;
+}
+
