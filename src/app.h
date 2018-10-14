@@ -1,19 +1,18 @@
 #pragma once
 
 #include "base.h"
-#include "log.h"
 #include "config.h"
 #include "engine.h"
 #include "mainwindow.h"
 
 class App
 {
-
 public:
     App();
     ~App();
 
-    App& get();
+    App(App const&)            = delete;
+    void operator=(App const&) = delete;
 
     void show();
     bool load_config(string file);
@@ -26,18 +25,7 @@ public:
 private:
     void update();
 
-    App* instance;
-
     Config config_;
     Engine engine_;
-    MainWindow* mainwindow_;
-
-    bool loaded_;
-    bool running_;
+    MainWindow* main_window_;
 };
-
-namespace version
-{
-    const u8 major = 0;
-    const u8 minor = 1;
-}

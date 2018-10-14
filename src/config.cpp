@@ -1,23 +1,24 @@
 #include "config.h"
+#include "log.h"
 
 #include <QFile>
 #include <QTextStream>
 
-Config::Config() :
-    loaded_(false)
+Config::Config()
 {
 }
 
 bool Config::load(string file)
 {
-    loaded_ = false;
-    entries_.clear();
-
     string str;
     QFile f(file);
     if (f.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QTextStream stream(&f);
+
+        int num_loaded = 0;
+        int num_new = 0;
+
         bool has_line = true;
         while (has_line)
         {
@@ -30,25 +31,26 @@ bool Config::load(string file)
             list<string> kv = line.split("=");
             if (kv.length() != 2)
             {
-                warning("Invalid line in config file %s", file);
+                LOGD("Invalid line in config file %: '%'", file, line);
                 continue;
             }
             string key = kv.first().trimmed();
             string value = kv.last().trimmed();
 
-            // read key value pair
-            if (entries_.contains(key))
-            {
-                warning("Duplicate entry in config file %s", file);
-                continue;
-            }
-
-            loaded_ = true;
+            if (!entries_.contains(key)) num_new++;
+            entries_.insert(key, value);
+            num_loaded++;
         }
-    }
-    f.close();
+        LOGI("Loaded % config values from % (% are new)", num_loaded, file, num_new);
 
-    return loaded_;
+        f.close();
+        return true;
+    }
+    else
+    {
+        LOGW("Could not open config file % (error %)", file, f.errorString());
+        return false;
+    }
 }
 
 bool Config::reload()
@@ -58,6 +60,11 @@ bool Config::reload()
 
 bool Config::save()
 {
+    if (file_.startsWith(":"))
+    {
+        return false;
+    }
+
     QFile f(file_);
     if (f.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -71,20 +78,4 @@ bool Config::save()
     }
 
     return false;
-}
-
-
-template<typename V> const V& Config::get(string name)
-{
-    if (!entries_.contains(name) || !entries_[name].canConvert<V>())
-    {
-        return nullptr;
-    }
-
-    return entries_[name].value<V>();
-}
-
-template<typename V> void Config::set(string name, const V& value)
-{
-    entries_.insert(name, value);
 }

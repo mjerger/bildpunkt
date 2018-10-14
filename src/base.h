@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QtCore>
+
 #include <cstdint>
 using chr = unsigned char;
 using u8  = uint8_t;
@@ -32,4 +34,10 @@ using img = cv::Mat;
 using v2 = cv::Vec2d;
 using v3 = cv::Vec3d;
 
-#include "log.h"
+extern void explode();
+
+namespace version
+{
+    static const u8 major = 0;
+    static const u8 minor = 1;
+}

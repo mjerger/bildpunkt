@@ -23,7 +23,7 @@ SOURCES += \
     src/mainwindow.cpp \
     src/app.cpp \
     src/config.cpp \
-    src/log.cpp
+    src/base.cpp
 
 HEADERS += \
     src/view.h \
@@ -44,3 +44,6 @@ RESOURCES = data/resources.qrc
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    bildpunkt.conf

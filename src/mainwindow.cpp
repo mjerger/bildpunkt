@@ -27,6 +27,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createMainMenu()
 {
+    // FILE MENU
     file_menu_ = menuBar()->addMenu("&File");
     new_= new QAction("&New");
     new_->setShortcut(QKeySequence::New);
@@ -66,6 +67,7 @@ void MainWindow::createMainMenu()
     file_menu_->addSeparator();
     file_menu_->addAction(exit_);
 
+    // ANALYZE MENU
     analyze_menu_ = menuBar()->addMenu("&Analyze");
     run_ = new QAction("&Run");
     run_->setShortcut(QKeySequence(Qt::Key_F5));
@@ -74,11 +76,13 @@ void MainWindow::createMainMenu()
     preset_menu_ = analyze_menu_->addMenu("&Presets");
     add_analyzer_menu_ = analyze_menu_->addMenu("A&dd");
 
+    // VIEW MENU
     view_menu_ = menuBar()->addMenu("&View");
     overlay_average_ = new QAction("&Overlay average");
     overlay_average_->setCheckable(true);
     view_menu_->addAction(overlay_average_);
 
+    // HELP MENU
     help_menu_ = menuBar()->addMenu("&Help");
     about_ = new QAction("&About");
     connect(about_, &QAction::triggered, this, &MainWindow::about_app);

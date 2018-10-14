@@ -1,23 +1,17 @@
 #include "app.h"
+#include "log.h"
 
 #include <QFile>
 
 App::App() :
-  mainwindow_(nullptr),
-  loaded_(false),
-  running_(false)
+  main_window_(nullptr)
 {
-    instance = this;
+    load_config(":/default.conf");
 }
 
 App::~App()
 {
-    delete mainwindow_;
-}
-
-App& App::get()
-{
-    return *instance;
+    delete main_window_;
 }
 
 bool App::load_config(string file)
@@ -27,14 +21,17 @@ bool App::load_config(string file)
 
 void App::show()
 {
-    mainwindow_ = new MainWindow();
+    main_window_ = new MainWindow();
 
     QFile file(":/style.qss");
     file.open(QFile::ReadOnly);
     string styleSheet = QLatin1String(file.readAll());
-    mainwindow_->setStyleSheet(styleSheet);
+    main_window_->setStyleSheet(styleSheet);
 
-    mainwindow_->show();
+    main_window_->resize(config_.get<int>("window.width"),
+                         config_.get<int>("window.height"));
+
+    main_window_->show();
 }
 
 Config& App::get_config()
