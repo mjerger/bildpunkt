@@ -4,10 +4,17 @@
 #include <QDateTime>
 #include <iostream>
 
+#define logv(...)    Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_verbose, __VA_ARGS__)
+#define logd(...)    Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_debug,   __VA_ARGS__)
+#define logi(...)    Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_info,    __VA_ARGS__)
+#define logw(...)    Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_warning, __VA_ARGS__)
+#define loge(...)    Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_error,   __VA_ARGS__)
+#define explode(...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_explode, __VA_ARGS__)
+
 class Log
 {
 public:
-    Log() : level_(lvl_info)  {}
+    Log()  {}
     ~Log() {}
 
     Log(Log const&)            = delete;
@@ -31,11 +38,10 @@ public:
 
 private:
     std::mutex mutex_;
-    level level_;
 
 public:
-    template<typename...A>
-    void print(const char* file, const char* func, u32 line, level l, const string& format, A...args)
+    template<class...A>
+    void print(const char* file, const char* func, u32 line, level l, A...args)
     {
         mutex_.lock();
         string out;
@@ -55,10 +61,10 @@ public:
 
         // format string
         const u32 num_args = sizeof...(A);
-        var vars[num_args] = { (var(args))... };
-        u32 var_index = 0;
+        var vars[] = { (var(args))... };
+        u32 var_index = 1;
         bool escape = false;
-        for (QChar c : format)
+        for (QChar c : vars[0].toString())
         {
             if (!escape && c == '%' && var_index < num_args)
             {
@@ -72,7 +78,9 @@ public:
             escape = (c == '\\');
         }
 
+#ifdef NO_QT_DEBUG
         if (l == lvl_debug)
+#endif
         {
             out.append(" (");
             out.append(file);
@@ -93,18 +101,9 @@ public:
         if (l == lvl_explode)
         {
             std::cerr << std::endl << ":( :( :(" << std::endl;
-            explode();
+            crash();
         }
 
         mutex_.unlock();
     }
 };
-
-
-#define LOG Log::get()
-#define LOGV(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_verbose, format, __VA_ARGS__)
-#define LOGD(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_debug,   format, __VA_ARGS__)
-#define LOGI(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_info,    format, __VA_ARGS__)
-#define LOGW(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_warning, format, __VA_ARGS__)
-#define LOGE(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_error,   format, __VA_ARGS__)
-#define EXPLODE(format, ...) Log::get().print(__FILE__, __func__, __LINE__, Log::lvl_explode, format, __VA_ARGS__)

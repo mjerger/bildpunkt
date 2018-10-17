@@ -18,6 +18,11 @@ bool Engine::load(string file)
     return video_.load(file);
 }
 
+void Engine::close()
+{
+    video_.close();
+}
+
 void Engine::reset()
 {
     running_ = false;

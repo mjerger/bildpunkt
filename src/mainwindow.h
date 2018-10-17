@@ -1,7 +1,8 @@
 #pragma once
 
-#include "mainwindow.h"
+#include "base.h"
 #include "engine.h"
+
 #include <QMainWindow>
 #include <QAction>
 #include <QMenuBar>
@@ -11,8 +12,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    MainWindow();
 
     void update();
 
@@ -28,6 +28,8 @@ public slots:
     void about_app();
 
 private:
+    virtual void closeEvent (QCloseEvent *event) override;
+
     void createMainMenu();
     void createStatusBar();
 

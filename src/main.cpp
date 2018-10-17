@@ -12,10 +12,9 @@ int main(int argc, char *argv[])
 
     Log::get();
 
-    App app;
-    app.load_config("bildpunkt.conf");
-    app.show();
-
+    App& a = App::get();
+    a.load_config("bildpunkt.conf");
+    a.show();
 
     return qapp->exec();
 }

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <signal.h>
 
-void explode()
+void crash()
 {
     raise(SIGSEGV);
 }

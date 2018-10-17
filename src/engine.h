@@ -11,7 +11,9 @@ public:
 
     void update();
 
-    bool load(string path);
+    bool load(string file);
+    void close();
+
     void start();
     void stop();
     void seek(dbl ms = 0.0);

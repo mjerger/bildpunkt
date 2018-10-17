@@ -36,6 +36,10 @@ bool Video::load(QString file)
     return loaded_;
 }
 
+void Video::close()
+{
+}
+
 bool Video::valid()
 {
     return loaded_ && width_ && height_ && fps_ > 0 && num_frames_ && length_ > 0;

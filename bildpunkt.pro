@@ -17,26 +17,26 @@ SOURCES += \
     src/view.cpp \
     src/timeline.cpp \
     src/engine.cpp \
-    src/about.cpp \
     src/video.cpp \
     src/settingswindow.cpp \
     src/mainwindow.cpp \
     src/app.cpp \
     src/config.cpp \
-    src/base.cpp
+    src/base.cpp \
+    src/aboutwindow.cpp
 
 HEADERS += \
     src/view.h \
     src/timeline.h \
     src/engine.h \
-    src/about.h \
     src/video.h \
     src/settingswindow.h \
     src/mainwindow.h \
     src/app.h \
     src/base.h \
     src/config.h \
-    src/log.h
+    src/log.h \
+    src/aboutwindow.h
 
 RESOURCES = data/resources.qrc
 

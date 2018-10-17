@@ -1,17 +1,28 @@
 #include "mainwindow.h"
 
-#include "view.h"
 #include "base.h"
 #include "app.h"
+#include "view.h"
+#include "settingswindow.h"
+#include "aboutwindow.h"
 
 #include <QApplication>
 #include <QFileDialog>
+#include <QCloseEvent>
+#include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+MainWindow::MainWindow() :
+    QMainWindow()
 {
-    setWindowTitle("bildpunkt");
-    setMinimumSize(1000, 600);
-    resize(1000, 600);
+    QFile file(":/style.qss");
+    file.open(QFile::ReadOnly);
+    string styleSheet = QLatin1String(file.readAll());
+    setStyleSheet(styleSheet);
+
+    setWindowTitle(format("% v%.%", app_name, app_version_major, app_version_minor));
+
+    resize(config.get<int>("main.window.width"),
+           config.get<int>("main.window.height"));
 
     QWidget *view = new View();
     setCentralWidget(view);
@@ -19,11 +30,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     createMainMenu();
     createStatusBar();
 }
-
-MainWindow::~MainWindow()
-{
-}
-
 
 void MainWindow::createMainMenu()
 {
@@ -51,7 +57,7 @@ void MainWindow::createMainMenu()
 
     settings_ = new QAction("&Settings");
     save_as_->setShortcut(QKeySequence(Qt::Key_F8));
-    connect(export_, &QAction::triggered, this, &MainWindow::export_file);
+    connect(settings_, &QAction::triggered, this, &MainWindow::show_settings);
 
     exit_ = new QAction("&Exit");
     exit_->setShortcut(QKeySequence::Close);
@@ -103,7 +109,6 @@ void MainWindow::open_file()
                                                                        "Projects (*.bp);;"
                                                                        "Videos (*.mpeg, *.mp4 *.mkv);;"
                                                                        "All files (*.*)");
-
     if (file == nullptr) return;
 }
 
@@ -121,11 +126,38 @@ void MainWindow::export_file()
 
 void MainWindow::show_settings()
 {
+    SettingsWindow settings(this);
+    settings.exec();
 }
 
 void MainWindow::exit_app()
 {
-    QApplication::quit();
+    close();
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    // TODO handle unsaved files
+    QMessageBox::StandardButton btn = QMessageBox::question(this,
+                                                            app_name,
+                                                            "There are unsaved changes.",
+                                                            QMessageBox::Discard |
+                                                            QMessageBox::Cancel |
+                                                            QMessageBox::Save);
+    switch (btn)
+    {
+    case QMessageBox::Discard:
+        event->accept();
+        break;
+    default:
+    case QMessageBox::Cancel:
+        event->ignore();
+        break;
+    case QMessageBox::Save:
+        // TODO save and then quit
+        event->accept();
+        break;
+    }
 }
 
 void MainWindow::reevaluate()
@@ -134,5 +166,6 @@ void MainWindow::reevaluate()
 
 void MainWindow::about_app()
 {
-
+    AboutWindow about(this);
+    about.exec();
 }

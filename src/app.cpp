@@ -11,7 +11,6 @@ App::App() :
 
 App::~App()
 {
-    delete main_window_;
 }
 
 bool App::load_config(string file)
@@ -22,14 +21,6 @@ bool App::load_config(string file)
 void App::show()
 {
     main_window_ = new MainWindow();
-
-    QFile file(":/style.qss");
-    file.open(QFile::ReadOnly);
-    string styleSheet = QLatin1String(file.readAll());
-    main_window_->setStyleSheet(styleSheet);
-
-    main_window_->resize(config_.get<int>("window.width"),
-                         config_.get<int>("window.height"));
 
     main_window_->show();
 }
@@ -46,5 +37,5 @@ void App::open(const string& file)
 
 void App::close()
 {
-
+    engine_.close();
 }

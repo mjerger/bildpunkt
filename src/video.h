@@ -9,6 +9,7 @@ public:
     Video();
 
     bool load(string file);
+    void close();
 
     bool valid();
 

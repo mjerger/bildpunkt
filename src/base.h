@@ -25,19 +25,41 @@ using dbl = double;
 using string = QString;
 using json = QJsonObject;
 using var = QVariant;
-template <typename V> using list = QList<V>;
-template <typename K, typename V> using map = QMap<K,V>;
-template <typename V> using set = QSet<V>;
+template <class V> using list = QList<V>;
+template <class K, class V> using map = QMap<K,V>;
+template <class V> using set = QSet<V>;
 
 #include <opencv/cv.h>
 using img = cv::Mat;
 using v2 = cv::Vec2d;
 using v3 = cv::Vec3d;
 
-extern void explode();
-
-namespace version
+template<class...A> string format(A...args)
 {
-    static const u8 major = 0;
-    static const u8 minor = 1;
+    string result;
+    result.reserve(256);
+
+    const u32 num_args = sizeof...(A);
+    var vars[] = { (var(args))... };
+    u32 var_index = 1;
+    bool escape = false;
+    for (QChar c : vars[0].toString())
+    {
+        if (!escape && c == '%' && var_index < num_args)
+        {
+            result.append(vars[var_index].toString());
+            var_index++;
+        }
+        else
+        {
+            result.append(c);
+        }
+        escape = (c == '\\');
+    }
+
+    return result;
 }
+
+extern void crash();
+
+class App;

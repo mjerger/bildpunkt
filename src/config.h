@@ -3,10 +3,13 @@
 #include "base.h"
 #include "log.h"
 
-class Config
+class Config : public QObject
 {
+    Q_OBJECT
+
 public:
-    Config();
+    Config() : QObject() {}
+    virtual ~Config() {}
 
     bool load(string file);
     bool reload();
@@ -16,7 +19,7 @@ public:
     {
         if (!entries_.contains(name) || !entries_[name].canConvert<V>())
         {
-            EXPLODE("Invalid config entry '%'", name);
+            explode("Invalid config entry '%'", name);
         }
 
         return entries_[name].value<V>();
@@ -26,6 +29,10 @@ public:
     {
         entries_.insert(name, value);
     }
+
+signals:
+    void settings_changed();
+
 
 private:
 

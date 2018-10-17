@@ -4,10 +4,6 @@
 #include <QFile>
 #include <QTextStream>
 
-Config::Config()
-{
-}
-
 bool Config::load(string file)
 {
     string str;
@@ -19,19 +15,20 @@ bool Config::load(string file)
         int num_loaded = 0;
         int num_new = 0;
 
-        bool has_line = true;
-        while (has_line)
+        while (true)
         {
             // read line
             string line = stream.readLine();
-            has_line = !line.isNull();
-            if (!has_line) break;
+            if (line.isNull()) break;
+
+            line = line.trimmed();
+            if (line.isEmpty() || line.startsWith("#")) continue;
 
             // get key and value
             list<string> kv = line.split("=");
             if (kv.length() != 2)
             {
-                LOGD("Invalid line in config file %: '%'", file, line);
+                logd("Invalid line in config file %: '%'", file, line);
                 continue;
             }
             string key = kv.first().trimmed();
@@ -41,14 +38,14 @@ bool Config::load(string file)
             entries_.insert(key, value);
             num_loaded++;
         }
-        LOGI("Loaded % config values from % (% are new)", num_loaded, file, num_new);
+        logi("Loaded % config values from % (% are new)", num_loaded, file, num_new);
 
         f.close();
         return true;
     }
     else
     {
-        LOGW("Could not open config file % (error %)", file, f.errorString());
+        logw("Could not open config file % (error %)", file, f.errorString());
         return false;
     }
 }

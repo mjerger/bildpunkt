@@ -9,4 +9,8 @@ class SettingsWindow : public QDialog
 
 public:
     SettingsWindow(QWidget *parent = nullptr);
+
+private slots:
+    void save_button_clicked();
+    void cancel_button_clicked();
 };

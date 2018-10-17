@@ -1,5 +1,6 @@
 QMainWindow,
-QWidget
+QWidget,
+QDialog
 {
     color: #BBB;
     background-color: #161619;
